@@ -216,6 +216,10 @@ defmodule Tetris.GameController do
     {:noreply, next_state}
   end
 
+  def handle_info(msg, state) do
+    {:noreply, state}
+  end
+
   # Helpers
   defp move_shape_down(
          %GameController{current_shape_coord: [shape_x, shape_y], level: level} = state
