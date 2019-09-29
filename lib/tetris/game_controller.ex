@@ -10,13 +10,23 @@ defmodule Tetris.GameController do
   @type game_state :: :paused | :running | :over
   @type key_event :: :esc | :space | :left | :right | :rotate_cw | :rotate_ccw
 
+  @type change_event :: %{
+          field: Field.t(),
+          current_shape: Shape.t(),
+          current_shape_coord: [number()],
+          game_state: game_state(),
+          level: non_neg_integer(),
+          score: non_neg_integer()
+        }
+
   defstruct field: [],
             current_shape: nil,
             current_shape_coord: [4, -3],
             score: 0,
             game_state: :paused,
             level: 0,
-            timer_ref: nil
+            timer_ref: nil,
+            state_change_listener: nil
 
   def start_link(args) do
     # IO.puts("start_link(args): #{inspect(args, pretty: true)}")
@@ -33,6 +43,7 @@ defmodule Tetris.GameController do
     width = Keyword.get(opts, :width, 10)
     height = Keyword.get(opts, :height, 18)
     start_timer = Keyword.get(opts, :start_timer, true)
+    state_change_listener = Keyword.get(opts, :state_change_listener)
 
     timer_ref =
       if start_timer do
@@ -44,33 +55,23 @@ defmodule Tetris.GameController do
     {:ok, new_field} = Field.new(width, height)
     next_shape = ShapeRepository.select_random_shape()
 
-    {:ok,
-     %GameController{
-       field: new_field,
-       current_shape: next_shape,
-       current_shape_coord: [div(width - 1, 2), Shape.pick_starting_y_coord(next_shape)],
-       timer_ref: timer_ref,
-       game_state: :running,
-       level: level
-     }}
+    init_state = %GameController{
+      field: new_field,
+      current_shape: next_shape,
+      current_shape_coord: [div(width - 1, 2), Shape.pick_starting_y_coord(next_shape)],
+      timer_ref: timer_ref,
+      game_state: :running,
+      level: level,
+      state_change_listener: state_change_listener
+    }
+
+    notify_of_change(%GameController{}, init_state)
+
+    {:ok, init_state}
   end
 
   def handle_call(:get_game_state, _from, %GameController{game_state: game_state} = state) do
     {:reply, game_state, state}
-  end
-
-  @doc """
-  Pauses the game.
-  """
-  def handle_info(:pause, %GameController{} = state) do
-    {:noreply, state}
-  end
-
-  @doc """
-  Restarts the game.
-  """
-  def handle_info(:restart, %GameController{} = state) do
-    {:noreply, state}
   end
 
   # Field.capture(field, shape, shape_x, shape_y)
@@ -88,15 +89,20 @@ defmodule Tetris.GameController do
           game_state: :running
         } = state
       ) do
-    if Field.can_move?(field, shape, shape_x, shape_y + 1) do
-      {:noreply, move_shape_down(state)}
-    else
-      if shape_y <= Shape.pick_starting_y_coord(shape) do
-        {:noreply, %GameController{state | game_state: :over}}
+    next_state =
+      if Field.can_move?(field, shape, shape_x, shape_y + 1) do
+        move_shape_down(state)
       else
-        {:noreply, flip_to_next_shape(state)}
+        if shape_y <= Shape.pick_starting_y_coord(shape) do
+          %GameController{state | game_state: :over}
+        else
+          flip_to_next_shape(state)
+        end
       end
-    end
+
+    notify_of_change(state, next_state)
+
+    {:noreply, next_state}
   end
 
   def handle_info(:tick, %GameController{} = state) do
@@ -113,11 +119,16 @@ defmodule Tetris.GameController do
       ) do
     rotated = Shape.rotate(current_shape, :ccw)
 
-    if Field.can_move?(field, rotated, shape_x, shape_y) do
-      {:noreply, %GameController{state | current_shape: rotated}}
-    else
-      {:noreply, state}
-    end
+    next_state =
+      if Field.can_move?(field, rotated, shape_x, shape_y) do
+        %GameController{state | current_shape: rotated}
+      else
+        state
+      end
+
+    notify_of_change(state, next_state)
+
+    {:noreply, next_state}
   end
 
   def handle_info(
@@ -130,11 +141,16 @@ defmodule Tetris.GameController do
       ) do
     rotated = Shape.rotate(current_shape, :cw)
 
-    if Field.can_move?(field, rotated, shape_x, shape_y) do
-      {:noreply, %GameController{state | current_shape: rotated}}
-    else
-      {:noreply, state}
-    end
+    next_state =
+      if Field.can_move?(field, rotated, shape_x, shape_y) do
+        %GameController{state | current_shape: rotated}
+      else
+        state
+      end
+
+    notify_of_change(state, next_state)
+
+    {:noreply, next_state}
   end
 
   def handle_info(
@@ -145,11 +161,16 @@ defmodule Tetris.GameController do
           current_shape_coord: [shape_x, shape_y]
         } = state
       ) do
-    if Field.can_move?(field, current_shape, shape_x - 1, shape_y) do
-      {:noreply, %GameController{state | current_shape_coord: [shape_x - 1, shape_y]}}
-    else
-      {:noreply, state}
-    end
+    next_state =
+      if Field.can_move?(field, current_shape, shape_x - 1, shape_y) do
+        %GameController{state | current_shape_coord: [shape_x - 1, shape_y]}
+      else
+        state
+      end
+
+    notify_of_change(state, next_state)
+
+    {:noreply, next_state}
   end
 
   def handle_info(
@@ -160,11 +181,16 @@ defmodule Tetris.GameController do
           current_shape_coord: [shape_x, shape_y]
         } = state
       ) do
-    if Field.can_move?(field, current_shape, shape_x + 1, shape_y) do
-      {:noreply, %GameController{state | current_shape_coord: [shape_x + 1, shape_y]}}
-    else
-      {:noreply, state}
-    end
+    next_state =
+      if Field.can_move?(field, current_shape, shape_x + 1, shape_y) do
+        %GameController{state | current_shape_coord: [shape_x + 1, shape_y]}
+      else
+        state
+      end
+
+    notify_of_change(state, next_state)
+
+    {:noreply, next_state}
   end
 
   def handle_info(
@@ -175,7 +201,9 @@ defmodule Tetris.GameController do
         } = state
       ) do
     :erlang.cancel_timer(timer_ref)
-    {:noreply, %GameController{state | timer_ref: nil, game_state: :paused}}
+    next_state = %GameController{state | timer_ref: nil, game_state: :paused}
+    notify_of_change(state, next_state)
+    {:noreply, next_state}
   end
 
   def handle_info(
@@ -183,7 +211,9 @@ defmodule Tetris.GameController do
         %GameController{game_state: :paused, level: level} = state
       ) do
     timer_ref = :erlang.send_after(timer_interval(level), self(), :tick)
-    {:noreply, %GameController{state | timer_ref: timer_ref, game_state: :running}}
+    next_state = %GameController{state | timer_ref: timer_ref, game_state: :running}
+    notify_of_change(state, next_state)
+    {:noreply, next_state}
   end
 
   # Helpers
@@ -224,6 +254,15 @@ defmodule Tetris.GameController do
         current_shape_coord: [div(field.width - 1, 2), Shape.pick_starting_y_coord(next_shape)],
         score: score + score_inc
     }
+  end
+
+  defp notify_of_change(%GameController{} = state, %GameController{state_change_listener: state_change_listener} = next_state) do
+    map_state = Map.from_struct(state) |> Map.drop([:timer_ref, :state_listener])
+    map_next_state = Map.from_struct(next_state) |> Map.drop([:timer_ref, :state_listener])
+    if state_change_listener != nil && map_state != map_next_state do
+      Process.send(state_change_listener, map_next_state, [])
+    end
+    :ok
   end
 
   defp timer_interval(level) do
