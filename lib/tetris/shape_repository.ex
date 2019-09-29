@@ -10,7 +10,7 @@ defmodule Tetris.ShapeRepository do
     # square
     %Shape{coords: [[0.5, 0.5], [0.5, -0.5], [-0.5, -0.5], [-0.5, 0.5]]},
     # 7
-    %Shape{coords: [[-1, -1], [0, 1], [0, 0], [-1, 0]]},
+    %Shape{coords: [[-1, 1], [0, 1], [0, 0], [-1, 0]]},
     # T
     %Shape{coords: [[-1, 1], [0, 1], [1, 1], [0, 0], [0, -1]]},
     # S
@@ -18,7 +18,7 @@ defmodule Tetris.ShapeRepository do
     # S mirrored
     %Shape{coords: [[0, 1], [0, 0], [1, 0], [1, -1]]},
     # 7 mirrored
-    %Shape{coords: [[1, 1], [0, 1], [0, 0], [-1, 0]]}
+    %Shape{coords: [[1, 1], [0, 1], [0, 0], [0, -1]]}
   ]
 
   @doc """
