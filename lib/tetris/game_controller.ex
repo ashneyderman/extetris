@@ -194,7 +194,7 @@ defmodule Tetris.GameController do
   end
 
   def handle_info(
-        {:key_press, :pause},
+        {:key_press, :toggle_state},
         %GameController{
           timer_ref: timer_ref,
           game_state: :running
@@ -207,7 +207,7 @@ defmodule Tetris.GameController do
   end
 
   def handle_info(
-        {:key_press, :restart},
+        {:key_press, :toggle_state},
         %GameController{game_state: :paused, level: level} = state
       ) do
     timer_ref = :erlang.send_after(timer_interval(level), self(), :tick)
