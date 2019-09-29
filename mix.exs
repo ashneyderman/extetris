@@ -2,26 +2,36 @@ defmodule Tetris.Mixfile do
   use Mix.Project
 
   def project do
-    [ app: :tetris,
+    [
+      app: :tetris,
       version: "0.0.1",
-      elixir: "~> 0.12.5",
-      deps: deps ]
+      elixir: "~> 1.9",
+      deps: deps(),
+      aliases: aliases(),
+      preferred_cli_env: [all_tests: :test]
+    ]
   end
 
   # Configuration for the OTP application
   def application do
-    [mod: { Tetris, [] }]
+    [mod: {Tetris, []}]
   end
 
-  # Returns the list of dependencies in the format:
-  # { :foobar, git: "https://github.com/elixir-lang/foobar.git", tag: "0.1" }
-  #
-  # To specify particular versions, regardless of the tag, do:
-  # { :barbat, "~> 0.1", github: "elixir-lang/barbat" }
   defp deps do
     [
-      {:cecho, git: "https://github.com/mazenharake/cecho.git", branch: "master"},
-      {:quaff, git: "https://github.com/qhool/quaff.git", branch: "master"}
+      {:matrix, "~> 0.3.2"},
+      {:credo, "~> 1.1"},
+      {:dialyxir, "~> 1.0.0-rc.7", only: [:dev], runtime: false}
+    ]
+  end
+
+  defp aliases do
+    [
+      all_tests: [
+        "format --check-formatted",
+        "compile --force --warnings-as-errors",
+        "test"
+      ]
     ]
   end
 end

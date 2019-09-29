@@ -1,3 +1,13 @@
-[ "aleppo": {:git, "https://github.com/ChicagoBoss/aleppo.git", "bef139e4c7546714d571f2a2341eca7a1da38d7e", [branch: "master"]},
-  "cecho": {:git, "https://github.com/mazenharake/cecho.git", "2c1d9bdeceb606ddcda6663c71f6932ce2b92e57", [branch: "master"]},
-  "quaff": {:git, "https://github.com/qhool/quaff.git", "2aafc33bfcc4de47eaa481bafcfb12e7a2013ee3", [branch: "master"]} ]
+%{
+  "aleppo": {:git, "https://github.com/ChicagoBoss/aleppo.git", "e5af421b8c75d86dd88aefae91402478250bb82c", [tag: "v0.9"]},
+  "bunt": {:hex, :bunt, "0.2.0", "951c6e801e8b1d2cbe58ebbd3e616a869061ddadcc4863d0a2182541acae9a38", [:mix], [], "hexpm"},
+  "cecho": {:git, "https://github.com/mazenharake/cecho.git", "bee5be4b3dba14737f8216843da73a78b0646102", [branch: "master"]},
+  "credo": {:hex, :credo, "1.1.4", "c2f3b73c895d81d859cec7fcee7ffdb972c595fd8e85ab6f8c2adbf01cf7c29c", [:mix], [{:bunt, "~> 0.2.0", [hex: :bunt, repo: "hexpm", optional: false]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: false]}], "hexpm"},
+  "dialyxir": {:hex, :dialyxir, "1.0.0-rc.7", "6287f8f2cb45df8584317a4be1075b8c9b8a69de8eeb82b4d9e6c761cf2664cd", [:mix], [{:erlex, ">= 0.2.5", [hex: :erlex, repo: "hexpm", optional: false]}], "hexpm"},
+  "erlex": {:hex, :erlex, "0.2.5", "e51132f2f472e13d606d808f0574508eeea2030d487fc002b46ad97e738b0510", [:mix], [], "hexpm"},
+  "exprintf": {:hex, :exprintf, "0.2.1", "b7e895dfb00520cfb7fc1671303b63b37dc3897c59be7cbf1ae62f766a8a0314", [:mix], [], "hexpm"},
+  "jason": {:hex, :jason, "1.1.2", "b03dedea67a99223a2eaf9f1264ce37154564de899fd3d8b9a21b1a6fd64afe7", [:mix], [{:decimal, "~> 1.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm"},
+  "matrix": {:hex, :matrix, "0.3.2", "9c826bc3a1117bf5e1c5cdcf3a3d95456c93bc2e127a04e363e9fc90b724f784", [:mix], [{:exprintf, "~> 0.1", [hex: :exprintf, repo: "hexpm", optional: false]}], "hexpm"},
+  "numexy": {:hex, :numexy, "0.1.9", "5c6984a8d0b604812971d0714cfc7bdcfd6735438857fcf28ca1c61c4e141ae8", [:mix], [], "hexpm"},
+  "quaff": {:git, "https://github.com/qhool/quaff.git", "0bb123a560ab2a69ec4fed206cb1983b6527963a", [branch: "master"]},
+}

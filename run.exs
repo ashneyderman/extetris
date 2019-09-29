@@ -1,7 +1,8 @@
 
-#Tetris.Tests.windows()
-#Tetris.Tests.min_max()
-Tetris.Tests.draw_test()
+# Tetris.Tests.windows()
+Tetris.Tests.min_max()
+# Tetris.Tests.draw_test()
+# Tetris.Tests.input()
 
 
 :application.stop(:cecho)

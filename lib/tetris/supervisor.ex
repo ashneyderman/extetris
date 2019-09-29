@@ -1,18 +1,13 @@
 defmodule Tetris.Supervisor do
-  use Supervisor.Behaviour
+  @moduledoc false
 
   def start_link do
-    :supervisor.start_link(__MODULE__, [])
-  end
+    :random.seed(:erlang.now())
 
-  def init([]) do
     children = [
-      # Define workers and child supervisors to be supervised
-      # worker(Tetris.Worker, [])
+      {DynamicSupervisor, strategy: :one_for_one, name: Tetris.GameControllerSup}
     ]
 
-    # See http://elixir-lang.org/docs/stable/Supervisor.Behaviour.html
-    # for other strategies and supported options
-    supervise(children, strategy: :one_for_one)
+    Supervisor.start_link(children, strategy: :one_for_one, name: __MODULE__)
   end
 end
