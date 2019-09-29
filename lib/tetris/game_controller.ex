@@ -10,15 +10,6 @@ defmodule Tetris.GameController do
   @type game_state :: :paused | :running | :over
   @type key_event :: :esc | :space | :left | :right | :rotate_cw | :rotate_ccw
 
-  @type change_event :: %{
-          field: Field.t(),
-          current_shape: Shape.t(),
-          current_shape_coord: [number()],
-          game_state: game_state(),
-          level: non_neg_integer(),
-          score: non_neg_integer()
-        }
-
   defstruct field: [],
             current_shape: nil,
             current_shape_coord: [4, -3],
@@ -102,7 +93,11 @@ defmodule Tetris.GameController do
 
     notify_of_change(state, next_state)
 
-    {:noreply, next_state}
+    if next_state.game_state != :over do
+      {:noreply, next_state}
+    else
+      {:stop, :normal, %GameController{}}
+    end
   end
 
   def handle_info(:tick, %GameController{} = state) do
