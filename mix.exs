@@ -3,7 +3,7 @@ defmodule Tetris.Mixfile do
 
   def project do
     [
-      app: :tetris,
+      app: :extetris,
       version: "0.0.1",
       elixir: "~> 1.9",
       deps: deps(),
