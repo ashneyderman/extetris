@@ -9,14 +9,14 @@ defmodule Tetris.ShapeRepository do
     %Shape{coords: [[0, 1.5], [0, 0.5], [0, -0.5], [0, -1.5]]},
     # square
     %Shape{coords: [[0.5, 0.5], [0.5, -0.5], [-0.5, -0.5], [-0.5, 0.5]]},
+    # 7
+    %Shape{coords: [[-1, -1], [0, 1], [0, 0], [-1, 0]]},
     # T
     %Shape{coords: [[-1, 1], [0, 1], [1, 1], [0, 0], [0, -1]]},
     # S
     %Shape{coords: [[0, 1], [0, 0], [-1, 0], [-1, -1]]},
     # S mirrored
     %Shape{coords: [[0, 1], [0, 0], [1, 0], [1, -1]]},
-    # 7
-    %Shape{coords: [[-1, -1], [0, 1], [0, 0], [-1, 0]]},
     # 7 mirrored
     %Shape{coords: [[1, 1], [0, 1], [0, 0], [-1, 0]]}
   ]

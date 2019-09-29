@@ -65,9 +65,6 @@ defmodule Tetris.GameController do
     {:reply, game_state, state}
   end
 
-  # Field.capture(field, shape, shape_x, shape_y)
-  # |> elem(1)
-  # |> Field.pp
   @doc """
   Moves the state of the game forward due to a periodic time event.
   """
