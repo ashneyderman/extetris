@@ -260,7 +260,7 @@ defmodule Tetris.GameController do
     map_state = Map.from_struct(state) |> Map.drop([:timer_ref, :state_listener])
     map_next_state = Map.from_struct(next_state) |> Map.drop([:timer_ref, :state_listener])
     if state_change_listener != nil && map_state != map_next_state do
-      Process.send(state_change_listener, map_next_state, [])
+      Process.send(state_change_listener, {:state_change, map_next_state}, [])
     end
     :ok
   end
