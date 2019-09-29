@@ -20,7 +20,7 @@ defmodule Tetris.Mixfile do
   defp deps do
     [
       {:matrix, "~> 0.3.2"},
-      {:credo, "~> 1.1"},
+      {:credo, "~> 1.1", only: [:dev], runtime: false},
       {:dialyxir, "~> 1.0.0-rc.7", only: [:dev], runtime: false}
     ]
   end
